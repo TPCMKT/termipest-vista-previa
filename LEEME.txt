@@ -1,0 +1,13 @@
+TERMIPEST - NUEVO SITIO WEB (vista previa para aprobación)
+
+1. Descomprime esta carpeta (clic derecho > Extraer todo).
+2. Abre index.html con doble clic (Chrome, Edge o Safari).
+3. Desde el menú y el pie de página se llega a:
+   - Fumigación de casas
+   - Fumigación para empresas
+   - Política de privacidad
+
+Notas:
+- Es una vista previa: el formulario no envía datos todavía (muestra un aviso y ofrece WhatsApp).
+- Se ve mejor con internet (tipografías de Google).
+- El sitio cambia a modo oscuro si el equipo lo tiene activado.
