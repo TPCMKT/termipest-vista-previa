@@ -53,23 +53,6 @@
     $$("[data-prop]").forEach(function (a) { a.addEventListener("click", function () { pick(lugar, a.getAttribute("data-prop")); }); });
   }
 
-  /* Foto que asoma al pasar el mouse por cada tipo de negocio (solo compu). */
-  function initBizPeek() {
-    var img = $("[data-biz-peek]"), list = $("[data-biz]");
-    if (!img || !list || !window.matchMedia("(hover:hover) and (min-width:1100px)").matches) return;
-    var wrap = list.parentElement;
-    $$("a", list).forEach(function (a) {
-      var pre = new Image(); pre.src = a.getAttribute("data-img");
-      a.addEventListener("mouseenter", function () {
-        img.src = a.getAttribute("data-img");
-        var top = a.getBoundingClientRect().top - wrap.getBoundingClientRect().top - 40;
-        img.style.top = Math.max(0, top) + "px";
-        img.classList.add("on");
-      });
-    });
-    list.addEventListener("mouseleave", function () { img.classList.remove("on"); });
-  }
-
   /* Números que cuentan al aparecer. */
   function initCount() {
     var els = $$("[data-count]"); if (!els.length || reduced || !("IntersectionObserver" in window)) return;
@@ -143,7 +126,7 @@
   }
 
   function boot() {
-    [initCta, initMenu, initChecks, initPrefill, initBizPeek, initCount, initReveal, initForm].forEach(safe);
+    [initCta, initMenu, initChecks, initPrefill, initCount, initReveal, initForm].forEach(safe);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot); else boot();
 })();
