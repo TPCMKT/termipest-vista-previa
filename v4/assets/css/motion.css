@@ -1,0 +1,161 @@
+/* =====================================================================
+   Termipest v4 · movimiento ligado al scroll
+   Regla: sin la clase .motion (JS apagado o con error) todo se ve en su
+   estado final y en altura normal. Con .motion, motion.js escribe --p (0→1)
+   y --e (0→1 suavizado) en cada bloque [data-sc].
+   ===================================================================== */
+body{overflow-x:clip;}
+
+/* ---------- 0 · Hero: al bajar, el texto sube y se desvanece y la foto se aleja ---------- */
+.motion .hero .hero-text-col{
+  transform:translate3d(0, calc(var(--p, 0) * -60px), 0);
+  opacity:calc(1 - var(--p, 0) * 1.1);
+  will-change:transform, opacity;
+}
+.motion .hero .hero-media{
+  transform:scale(calc(1 - var(--p, 0) * .1));
+  transform-origin:50% 0;
+  border-radius:calc(var(--p, 0) * 40px);
+  overflow:hidden;
+  will-change:transform;
+}
+
+/* ---------- 1 · Frase que se enciende palabra por palabra ---------- */
+.statement{background:var(--surface);padding-block:clamp(72px, 12vw, 140px);}
+.statement-text{
+  font-family:var(--font-head);font-weight:800;
+  font-size:clamp(1.85rem, 5.2vw, 4.1rem);line-height:1.1;letter-spacing:-.02em;
+  max-width:20ch;color:var(--text);text-wrap:balance;
+}
+.statement-text strong{font-weight:800;}
+.motion .statement{height:240svh;padding:0;}
+.motion .statement-pin{position:sticky;top:0;height:100svh;display:flex;align-items:center;}
+.motion .statement.is-split .w{color:color-mix(in srgb, var(--text) 16%, transparent);transition:color .3s ease;}
+.motion .statement.is-split .w.on{color:var(--text);}
+.motion .statement.is-split .w-strong{
+  background:linear-gradient(var(--brand-yellow), var(--brand-yellow)) 0 92% / 0 .3em no-repeat;
+  transition:color .3s ease, background-size .5s var(--ease-out);
+}
+.motion .statement.is-split .w-strong.on{background-size:100% .3em;}
+
+/* ---------- 2 · Escena que se abre a pantalla completa ---------- */
+.cinema{position:relative;background:var(--brand-dark);color:#fff;}
+.cinema-pin{position:relative;min-height:80svh;display:flex;align-items:flex-end;overflow:hidden;}
+.cinema-frame{position:absolute;inset:0;margin:0;overflow:hidden;}
+.cinema-img{width:100%;height:100%;object-fit:cover;object-position:68% 50%;}
+.cinema-frame::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg, rgba(11,11,11,.78) 0%, rgba(11,11,11,.45) 40%, rgba(11,11,11,0) 70%);
+}
+.cinema-copy{position:relative;z-index:1;padding-block:clamp(48px, 10vh, 120px);}
+.cinema-copy .eyebrow{color:var(--brand-yellow);margin-bottom:12px;display:block;}
+.cinema-copy h2{font-size:clamp(2.1rem, 6vw, 4.6rem);max-width:13ch;color:#fff;}
+.cinema-copy p{margin-top:16px;max-width:38ch;font-size:clamp(1rem, 1.5vw, 1.2rem);color:rgba(255,255,255,.86);}
+@media (max-width:767.98px){
+  .cinema-img{object-position:72% 50%;}
+  .cinema-frame::after{background:linear-gradient(0deg, rgba(11,11,11,.88) 0%, rgba(11,11,11,.55) 45%, rgba(11,11,11,0) 75%);}
+}
+
+.motion .cinema{height:280svh;background:var(--surface);}
+.motion .cinema-pin{position:sticky;top:0;height:100svh;min-height:0;}
+.motion .cinema{
+  --k:min(1, calc(var(--p, 0) * 1.8));
+  --t:max(0, min(1, calc((var(--p, 0) - .5) * 3.5)));
+}
+.motion .cinema-frame{
+  clip-path:inset(calc((1 - var(--k)) * 16%) calc((1 - var(--k)) * 20%) round calc((1 - var(--k)) * 36px));
+  will-change:clip-path;
+}
+.motion .cinema-img{transform:scale(calc(1.2 - var(--k) * .2));will-change:transform;}
+.motion .cinema-frame::after{opacity:var(--t);}
+.motion .cinema-copy{opacity:var(--t);transform:translate3d(0, calc((1 - var(--t)) * 48px), 0);}
+@media (max-width:767.98px){
+  .motion .cinema-frame{clip-path:inset(calc((1 - var(--k)) * 12%) calc((1 - var(--k)) * 7%) round calc((1 - var(--k)) * 24px));}
+}
+
+/* ---------- 3 · Proceso: pasos que avanzan con una foto fija al lado ---------- */
+.sx-sec{background:var(--surface-alt);}
+.sx-sec .sec-head{margin-bottom:clamp(24px, 4vw, 48px);}
+.sx{position:relative;}
+.sx-steps{counter-reset:none;display:grid;gap:40px;}
+.sx-step{position:relative;}
+.sx-inline{margin:0 0 18px;border-radius:18px;overflow:hidden;aspect-ratio:3 / 2;background:#ddd;}
+.sx-inline img{width:100%;height:100%;object-fit:cover;}
+.sx-num{
+  display:block;font-family:var(--font-head);font-weight:800;font-size:clamp(3rem, 7vw, 5.5rem);line-height:1;
+  color:transparent;-webkit-text-stroke:1.5px var(--accent-soft);margin-bottom:6px;
+}
+.sx-step .proc-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sx-step .proc-icon{width:26px;height:26px;color:var(--accent);flex:none;}
+.sx-step h3{font-size:clamp(1.5rem, 2.6vw, 2.1rem);}
+.sx-step p{font-size:1.05rem;color:var(--text-muted);max-width:42ch;}
+.sx-visual{display:none;}
+
+@media (min-width:992px){
+  .sx{display:grid;grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr);gap:clamp(40px, 6vw, 96px);}
+  .sx-inline{display:none;}
+  .sx-steps{gap:0;}
+  .sx-step{min-height:72svh;display:flex;flex-direction:column;justify-content:center;}
+  .sx-visual{display:flex;gap:18px;position:sticky;top:calc(var(--header-h) + 6svh);height:calc(88svh - var(--header-h));align-self:start;}
+  .sx-stack{position:relative;flex:1;border-radius:24px;overflow:hidden;background:#222;box-shadow:var(--shadow);}
+  .sx-shot{position:absolute;inset:0;margin:0;opacity:0;transform:scale(1.08);transition:opacity .7s var(--ease-out), transform 1.2s var(--ease-out);}
+  .sx-shot.is-on{opacity:1;transform:scale(1);}
+  .sx-shot img{width:100%;height:100%;object-fit:cover;}
+  .sx-tag{
+    position:absolute;left:18px;bottom:18px;z-index:2;padding:8px 14px;border-radius:999px;
+    background:rgba(11,11,11,.72);color:#fff;font-family:var(--font-head);font-weight:700;font-size:.85rem;letter-spacing:.08em;
+    backdrop-filter:blur(6px);
+  }
+  .sx-tag span{color:var(--brand-yellow);}
+  .sx-bar{width:4px;border-radius:4px;background:color-mix(in srgb, var(--text) 12%, transparent);overflow:hidden;}
+  .sx-bar i{display:block;width:100%;height:100%;background:var(--brand-yellow);transform:scaleY(0);transform-origin:50% 0;}
+  .sx.is-live .sx-step{opacity:.28;transition:opacity .5s ease;}
+  .sx.is-live .sx-step.is-on{opacity:1;}
+  .sx.is-live .sx-step.is-on .sx-num{color:var(--brand-yellow);-webkit-text-stroke-color:var(--brand-yellow);}
+}
+
+/* ---------- 4 · Franja con profundidad (parallax vertical) ---------- */
+.band{position:relative;min-height:clamp(380px, 78svh, 760px);display:flex;align-items:flex-end;overflow:hidden;background:var(--brand-dark);color:#fff;}
+.band-media{position:absolute;inset:-12% 0;}
+.band-img{width:100%;height:100%;object-fit:cover;object-position:70% 50%;}
+.band::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg, rgba(11,11,11,.82) 0%, rgba(11,11,11,.3) 50%, rgba(11,11,11,0) 80%);pointer-events:none;}
+.band-copy{position:relative;z-index:1;padding-block:clamp(36px, 8vh, 80px);}
+.band-line{font-family:var(--font-head);font-weight:800;font-size:clamp(1.5rem, 3.6vw, 2.8rem);line-height:1.12;max-width:24ch;text-transform:uppercase;}
+.band-line span{color:var(--brand-yellow);}
+.motion .band-media{transform:translate3d(0, calc((var(--p, .5) - .5) * -22%), 0);will-change:transform;}
+.motion .band-copy{transform:translate3d(0, calc((1 - var(--e, 1)) * 60px), 0);}
+
+/* ---------- 5 · El reporte se descubre de abajo hacia arriba ---------- */
+.unveil{background:var(--surface);padding-block:clamp(64px, 9vw, 110px);}
+.unveil-grid{display:grid;gap:28px;align-items:center;}
+.unveil-copy .eyebrow{color:var(--accent-soft);display:block;margin-bottom:10px;}
+.unveil-copy h2{font-size:clamp(2rem, 5vw, 3.8rem);}
+.unveil-copy p{margin-top:14px;font-size:1.06rem;color:var(--text-muted);max-width:44ch;}
+.unveil-media{margin:0;border-radius:22px;overflow:hidden;aspect-ratio:3 / 2;background:#ddd;}
+.unveil-img{width:100%;height:100%;object-fit:cover;}
+@media (min-width:992px){ .unveil-grid{grid-template-columns:minmax(0, .85fr) minmax(0, 1.15fr);gap:72px;} }
+
+.motion .unveil{height:230svh;padding:0;}
+.motion .unveil-pin{position:sticky;top:0;height:100svh;display:flex;align-items:center;}
+.motion .unveil{
+  --k:min(1, calc(var(--p, 0) * 1.9));
+  --t:min(1, calc(var(--p, 0) * 2.6));
+}
+.motion .unveil-media{clip-path:inset(calc((1 - var(--k)) * 100%) 0 0 0 round 22px);will-change:clip-path;}
+.motion .unveil-img{transform:scale(calc(1.25 - var(--k) * .25));}
+.motion .unveil-copy{opacity:var(--t);transform:translate3d(0, calc((1 - var(--t)) * 40px), 0);}
+@media (max-width:991.98px){
+  .motion .unveil-grid{gap:20px;}
+  .unveil-media{aspect-ratio:auto;height:min(42svh, 62vw);}
+}
+
+/* ---------- 6 · Tarjetas que suben con un pequeño zoom ---------- */
+.js .reveal-rise{transform:translateY(56px) scale(.95);}
+.js .reveal-rise.in{transform:none;}
+
+/* Las apariciones suaves NO se apagan con "reducir movimiento" (Windows lo trae activado).
+   Solo se quitan los efectos intrusivos: escenas fijas largas y escalas. */
+@media (prefers-reduced-motion: reduce){
+  .js .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease, transform .6s ease;}
+  .js .reveal.in{opacity:1;transform:none;}
+}
